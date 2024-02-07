@@ -1,14 +1,21 @@
 /* eslint-disable no-unused-vars */
 import { React } from 'react'
 import { Link, NavLink } from 'react-router-dom'
+import { useAuth } from './auth'
 
 function Menu () {
+  const auth = useAuth()
+
   return (
         <>
            <div>
             <ul>
                 {
-                    routes.map(route => (
+                    routes.map(route => {
+                      if (route.private && !auth.user) return null
+                      if (route.text === 'Login' && auth.user) return null
+
+                      return (
                         <li key={route.to}>
                             <NavLink
                             style={({ isActive }) => ({ color: isActive ? 'red' : 'blue' })}
@@ -17,7 +24,8 @@ function Menu () {
                             </NavLink>
 
                         </li>
-                    ))
+                      )
+                    })
                 }
                 {/* <li>
                   <Link to="/">Home</Link>
@@ -52,15 +60,28 @@ function Menu () {
 const routes = [
   {
     to: '/',
-    text: 'Home'
+    text: 'Home',
+    private: false
   },
   {
     to: '/profile',
-    text: 'Profile'
+    text: 'Profile',
+    private: true
   },
   {
     to: '/blog',
-    text: 'Blog'
+    text: 'Blog',
+    private: false
+  },
+  {
+    to: '/login',
+    text: 'Login',
+    private: false
+  },
+  {
+    to: '/logOut',
+    text: 'Logout',
+    private: true
   }
 ]
 
